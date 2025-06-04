@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SearchInput from "../components/SearchInput";
@@ -22,11 +23,15 @@ const allProducts = [
   { id: 15, title: 'Fitness Training', description: 'Personal fitness coaching', category: 'Health' },
 ];
 
+
+
+
 const ITEMS_PER_PAGE = 12;
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   // Filter products by category
   const filteredProducts = selectedCategory === "All" 
@@ -75,12 +80,14 @@ const Services = () => {
   ) : (
     paginatedProducts.map((product) => (
       <div
-        key={product.id}
-        className="min-h-[250px] border border-gray-300 rounded-xl shadow-sm p-6 hover:shadow-md transition flex flex-col justify-between"
-      >
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.title}</h3>
-        <p className="text-gray-600">{product.description}</p>
-      </div>
+      key={product.id}
+      onClick={() => navigate(`/service/${product.id}`)}
+      className="cursor-pointer min-h-[250px] border border-gray-300 rounded-xl shadow-sm p-6 hover:shadow-md transition flex flex-col justify-between"
+    >
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.title}</h3>
+      <p className="text-gray-600">{product.description}</p>
+    </div>
+    
     ))
   )}
 </main>
