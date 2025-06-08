@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
+import { Star } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import serviceImage from "../assets//images/servicesimg.jpg"
@@ -40,7 +41,7 @@ const ServiceDetail = () => {
         ← Back
       </button>
 
-      <div className="w-[90%] mx-auto mt-20 flex flex-col lg:flex-row flex-wrap items-start gap-10">
+      <div className="w-[90%] mx-auto mt-2 flex flex-col lg:flex-row flex-wrap items-start gap-10">
         {/* Left: Service Info */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-md w-full lg:w-[60%]">
           <img
@@ -51,6 +52,13 @@ const ServiceDetail = () => {
           <h1 className="text-3xl font-bold mb-3 text-blue-900">{service.title}</h1>
           <p className="text-gray-700 mb-4">{service.description}</p>
           <p className="text-sm text-gray-500">Category: {service.category}</p>
+          <div className="flex items-center space-x-1 pt-3 text-yellow-500 text-sm">
+          {[...Array(4)].map((_, i) => (
+            <Star key={i} size={14} fill="currentColor" stroke="currentColor" />
+          ))}
+          <Star size={14} className="text-gray-300" />
+          <span className="text-gray-600 ml-2 font-medium">(4.5)</span>
+        </div>
         </div>
 
         {/* Right: Booking Form */}

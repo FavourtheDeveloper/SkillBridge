@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Swal from 'sweetalert2';
 import Navbar from "../components/Navbar"; // adjust path if needed
+import { useNavigate } from "react-router-dom";
 
 const LoginRegister = () => {
   const [activeTab, setActiveTab] = useState("login");
-
+  const navigate = useNavigate()
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [registerData, setRegisterData] = useState({
     name: "",
@@ -30,6 +31,7 @@ const LoginRegister = () => {
         icon: 'success',
         confirmButtonText: 'OK'
       });
+      navigate("/dashboard")
     } else {
       Swal.fire({
         title: 'Error!',
