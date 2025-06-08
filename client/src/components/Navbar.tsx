@@ -16,7 +16,7 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-white hover:text-orange-500">Home</a>
+           <Link to={"/"}><a href="#" className="text-white hover:text-orange-500">Home</a></Link> 
 
             {/* Login/Register as a button */}
             <Link to={"/auth"}><button

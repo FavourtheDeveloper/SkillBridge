@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SearchInput from "../components/SearchInput";
 import CategorySelector from "../components/CategorySelector";
+import ServiceCard from "../components/ServiceCard";
 
 const allProducts = [
   { id: 1, title: 'Web Design', description: 'Modern web design service', category: 'Tech' },
@@ -31,7 +32,7 @@ const ITEMS_PER_PAGE = 12;
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const navigate = useNavigate();
+  
 
   // Filter products by category
   const filteredProducts = selectedCategory === "All" 
@@ -79,14 +80,7 @@ const Services = () => {
     <p className="text-gray-600 col-span-full text-center">No services found.</p>
   ) : (
     paginatedProducts.map((product) => (
-      <div
-      key={product.id}
-      onClick={() => navigate(`/service/${product.id}`)}
-      className="cursor-pointer min-h-[250px] border border-gray-300 rounded-xl shadow-sm p-6 hover:shadow-md transition flex flex-col justify-between"
-    >
-      <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.title}</h3>
-      <p className="text-gray-600">{product.description}</p>
-    </div>
+      <ServiceCard product={product} />
     
     ))
   )}

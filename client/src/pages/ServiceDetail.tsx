@@ -33,7 +33,7 @@ const ServiceDetail = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <div className="w-[90%] mx-auto mt-10 flex flex-col lg:flex-row flex-wrap items-start gap-10">
+      <div className="w-[90%] mx-auto mt-20 flex flex-col lg:flex-row flex-wrap items-start gap-10">
         {/* Left: Service Info */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-md w-full lg:w-[60%]">
           <img
