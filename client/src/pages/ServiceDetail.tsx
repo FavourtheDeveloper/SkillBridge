@@ -1,7 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import serviceImage from "../assets//images/servicesimg.jpg"
 
 const allProducts = [
   { id: 1, title: 'Web Design', description: 'Modern web design service', category: 'Tech' },
@@ -28,18 +29,24 @@ const ServiceDetail = () => {
         confirmButtonText: 'OK'
       });
   };
-
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
+      <button
+        onClick={() => navigate(-1)}
+        className=" text-blue-800 px-4 py-4 rounded transition"
+      >
+        ← Back
+      </button>
 
       <div className="w-[90%] mx-auto mt-20 flex flex-col lg:flex-row flex-wrap items-start gap-10">
         {/* Left: Service Info */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-md w-full lg:w-[60%]">
           <img
-            src={`https://source.unsplash.com/800x400/?${service.title}`} // Replace with real image
+            src={serviceImage} // Replace with real image
             alt={service.title}
-            className="w-full h-64 object-cover rounded-lg mb-4"
+            className="w-full h-72 object-cover rounded-lg mb-4"
           />
           <h1 className="text-3xl font-bold mb-3 text-blue-900">{service.title}</h1>
           <p className="text-gray-700 mb-4">{service.description}</p>

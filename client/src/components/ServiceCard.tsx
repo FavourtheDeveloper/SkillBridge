@@ -1,6 +1,7 @@
 
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import serviceImage from "../assets//images/servicesimg.jpg"
 
 const ServiceCard = ({product}) => {
     const navigate = useNavigate();
@@ -12,8 +13,8 @@ const ServiceCard = ({product}) => {
     className="max-w-sm w-full bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition duration-300">
       {/* Top Image */}
       <img
-        src="/html-conversion-banner.jpg"
-        alt="HTML Conversion"
+        src={serviceImage}
+        alt="Service Image"
         className="w-full h-40 object-cover"
       />
 
@@ -22,7 +23,7 @@ const ServiceCard = ({product}) => {
         {/* Seller Info */}
         <div className="flex items-center space-x-3">
           <img
-            src="/seller.jpg"
+            src={serviceImage}
             alt="Nancy Reyes"
             className="w-10 h-10 rounded-full object-cover"
           />
