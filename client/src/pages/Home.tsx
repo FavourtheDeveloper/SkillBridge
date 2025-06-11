@@ -24,7 +24,7 @@ const Home = () => {
       </div>
 
       {/* Why Choose Section */}
-      <div className="mt-12 px-4">
+      <div className="mt-8 px-4">
         <h3 className="text-center font-bold text-2xl md:text-3xl p-4">
           🎯 Why Choose SkillBridge?
         </h3>

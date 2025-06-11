@@ -1,55 +1,47 @@
+import { useState } from "react";
 import Topbar from "../components/Topbar";
-import ServiceImage from '../assets/images/servicesimg.jpg'
+import DashSidebar from "../components/DashSidebar";
+import { Routes, Route } from "react-router-dom";
+import MyGigs from "./MyGigs";
+import Orders from "./Order";
+import Dash from "./Dash";
+import EditProfile from "./EditProfile";
+
 const Dashboard = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <>
-    <Topbar />
-    <div className="flex justify-around container m-auto">
-        <div className="flex items-center bg-orange-500 rounded-2xl text-white p-10">
-        <div>
-            <h2 className="text-4xl pb-2">Good Morning, Favour</h2>
-            <p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. <br />
-            amet consectetur adipisicing elit. </p>
-        </div>
+    <div className="min-h-screen">
+      {/* Sidebar */}
+      <div
+        className={`${
+          sidebarOpen ? "block" : "hidden"
+        } md:block fixed md:fixed top-0 left-0 h-full w-52 bg-white shadow-md z-20`}
+      >
+        <DashSidebar />
+      </div>
 
-        <div>
-            <img className="w-32 h-32 mx-5 rounded-full object-cover" src={ServiceImage} alt="profilePic" />
-        </div>
-        </div>
+      {/* Overlay on mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-10 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
 
-        <div className="flex items-center bg-orange-500 rounded-2xl text-white p-10">
-        <div>
-            <h2 className="text-2xl pb-2">Invite your friends, reward yourself</h2>
-            <p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. <br />  
-            amet consectetur adipisicing elit. </p>
-        </div>
-
-        <div>
-            <img className="w-32 h-32 mx-5 rounded-full object-cover" src={ServiceImage} alt="profilePic" />
-        </div>
-        </div>
-
-        
-    </div>
-
-    <div className="container m-auto mt-7">
-      <h2 className="text-xl font-extrabold mb-4">Dashboard Overview</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded shadow">
-          <h3 className="text-sm text-gray-500">Total Gigs</h3>
-          <p className="text-2xl font-bold">3</p>
-        </div>
-        <div className="bg-white p-6 rounded shadow">
-          <h3 className="text-sm text-gray-500">Pending Orders</h3>
-          <p className="text-2xl font-bold">5</p>
-        </div>
-        <div className="bg-white p-6 rounded shadow">
-          <h3 className="text-sm text-gray-500">Completed Orders</h3>
-          <p className="text-2xl font-bold">12</p>
-        </div>
+      {/* Main content */}
+      <div className="flex flex-col md:ml-52 min-h-screen">
+        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="flex-1 bg-gray-100 p-4 md:p-6">
+          <Routes>
+            <Route path="/" element={<Dash />} />
+            <Route path="/my-gigs" element={<MyGigs />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+          </Routes>
+        </main>
       </div>
     </div>
-    </>
   );
 };
 
