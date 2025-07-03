@@ -1,71 +1,119 @@
-import { useState } from "react";
-import ServiceImage from '../assets/images/servicesimg.jpg'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../api";
+import ServiceImage from "../assets/images/servicesimg.jpg";
 
 const Dash = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("User");
 
-  const orders = [
-    { id: 1, customer: "John Doe", gig: "Plumbing Fix", status: "Pending" },
-    { id: 2, customer: "Jane Smith", gig: "Electrical Setup", status: "Completed" },
-    { id: 3, customer: "Alice Brown", gig: "Cleaning Service", status: "Pending" },
-    { id: 4, customer: "Bob Johnson", gig: "Painting Job", status: "Completed" },
-  ];
+  // 🔒 Redirect to login if token is missing
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    
+    if (!token) {
+      navigate("/auth");
+    } else {
+      setUserName(user?.name || "User");
+    }
+  }, [navigate]);
 
-  const filteredOrders = orders.filter((order) => {
-    const matchesStatus = filter === "All" || order.status === filter;
-    const matchesSearch = order.customer.toLowerCase().includes(searchTerm.toLowerCase());
+  // 📦 Fetch user bookings
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await API.get("/bookings/my-bookings", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const result = Array.isArray(res.data)
+          ? res.data
+          : res.data.bookings || [];
+
+        setBookings(result);
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+        setBookings([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  const filteredBookings = bookings.filter((booking) => {
+    const matchesStatus = filter === "All" || booking.status === filter;
+    const matchesSearch = booking.name?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
   return (
     <div>
+      {/* Top Cards */}
       <div className="flex justify-around mt-5 container m-auto">
+        {/* Welcome Card */}
         <div className="flex items-center bg-orange-500 rounded-2xl text-white p-5">
-        <div>
-            <h2 className="text-4xl pb-2">Good Morning, Favour</h2>
-            <p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing  <br /> elit.
-            amet consectetur adipisicing elit. </p>
+          <div>
+            <h2 className="text-4xl pb-2">Good Morning, Egbon <br /> {userName}</h2>
+            <p className="text-sm">
+              Welcome back! Here's a quick summary of your <br /> dashboard.
+            </p>
+          </div>
+          <div>
+            <img
+              className="w-32 h-32 mx-5 rounded-full object-cover"
+              src={ServiceImage}
+              alt="profilePic"
+            />
+          </div>
         </div>
 
-        <div>
-            <img className="w-32 h-32 mx-5 rounded-full object-cover" src={ServiceImage} alt="profilePic" />
-        </div>
-        </div>
-
+        {/* Referral Card */}
         <div className="flex items-center bg-orange-500 rounded-2xl text-white p-5">
-        <div>
+          <div>
             <h2 className="text-2xl pb-2">Invite your friends, reward yourself</h2>
-            <p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing  <br /> elit.  
-            amet consectetur adipisicing elit. </p>
+            <p className="text-sm">
+              Share your referral link and earn bonuses for each <br /> successful signup.
+            </p>
+          </div>
+          <div>
+            <img
+              className="w-32 h-32 mx-5 rounded-full object-cover"
+              src={ServiceImage}
+              alt="profilePic"
+            />
+          </div>
         </div>
+      </div>
 
-        <div>
-            <img className="w-32 h-32 mx-5 rounded-full object-cover" src={ServiceImage} alt="profilePic" />
-        </div>
-        </div>
-
-        
-    </div>
-
+      {/* Dashboard Overview */}
       <div className="container m-auto p-5 mt-7">
         <h2 className="text-xl font-extrabold mb-4">Dashboard Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-sm text-gray-500">Total Gigs</h3>
-            <p className="text-2xl font-bold">3</p>
+            <h3 className="text-sm text-gray-500">Total Bookings</h3>
+            <p className="text-2xl font-bold">{bookings.length}</p>
           </div>
           <div className="bg-white p-6 rounded shadow">
             <h3 className="text-sm text-gray-500">Pending Orders</h3>
-            <p className="text-2xl font-bold">5</p>
+            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Pending").length}</p>
           </div>
           <div className="bg-white p-6 rounded shadow">
             <h3 className="text-sm text-gray-500">Completed Orders</h3>
-            <p className="text-2xl font-bold">12</p>
+            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Completed").length}</p>
           </div>
         </div>
 
-        {/* Search and Filter */}
+        {/* Filter & Search */}
         <div className="flex justify-between items-center mb-4">
           <input
             type="text"
@@ -86,7 +134,7 @@ const Dash = () => {
           </select>
         </div>
 
-        {/* Orders Table */}
+        {/* Bookings Table */}
         <div className="overflow-x-auto bg-white shadow rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -97,28 +145,34 @@ const Dash = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{order.customer}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{order.gig}</td>
+              {loading ? (
+                <tr>
+                  <td colSpan={3} className="text-center px-6 py-4 text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : filteredBookings.length > 0 ? (
+                filteredBookings.map((booking) => (
+                  <tr key={booking.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{booking.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{booking.Gig?.title || "N/A"}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                          order.status === "Completed"
+                          booking.status === "Completed"
                             ? "bg-green-100 text-green-700"
                             : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {order.status}
+                        {booking.status || "Pending"}
                       </span>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td className="px-6 py-4 text-center text-sm text-gray-500" colSpan="3">
-                    No orders found.
+                  <td className="px-6 py-4 text-center text-sm text-gray-500" colSpan={3}>
+                    No bookings found.
                   </td>
                 </tr>
               )}

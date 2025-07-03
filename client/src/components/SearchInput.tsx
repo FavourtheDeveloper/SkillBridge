@@ -1,28 +1,16 @@
-import React, { useState } from 'react';
-import type { FormEvent } from 'react';
-import { Search } from 'lucide-react';
+// components/SearchInput.tsx
+import React from "react";
 
-const SearchInput: React.FC = () => {
-  const [query, setQuery] = useState<string>('');
-
-  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert(query);
-  };
-
+const SearchInput = ({ onSearch }) => {
   return (
-    <form onSubmit={handleSearch} className="relative w-full max-w-xs">
-      <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="w-5 h-5 text-gray-500" />
-      </span>
+    <div className="mb-4">
       <input
         type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search Keywords"
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Search services..."
+        onChange={(e) => onSearch(e.target.value)}
+        className="w-full border border-blue-900 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-    </form>
+    </div>
   );
 };
 
