@@ -19,6 +19,8 @@ app.use("/api/bookings", require("./routes/bookings"));
 app.use("/api/artisans", require("./routes/artisanRoutes"));
 app.use("/api", paymentRoutes);
 app.use("/api/users", userRoutes); // 👈 e.g. /users/me
+app.use("/api", require("./routes/recommendationRoutes"));
+
 
 
 

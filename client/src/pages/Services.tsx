@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import SearchInput from "../components/SearchInput";
 import CategorySelector from "../components/CategorySelector";
 import ServiceCard from "../components/ServiceCard";
+import Recommendations from "../components/Recommendations";
 import API from "../api";
 
 const ITEMS_PER_PAGE = 12;
@@ -16,6 +17,7 @@ const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterNearby, setFilterNearby] = useState(false); // ✅ toggle nearby
   const [locationSupported, setLocationSupported] = useState(true);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchServices();
@@ -119,6 +121,8 @@ const Services = () => {
             </span>
           )}
         </div>
+
+        <Recommendations token={token} />
 
         <div className="flex flex-col mt-6 md:flex-row gap-6">
           {/* Category Sidebar */}
