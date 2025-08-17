@@ -78,3 +78,53 @@ exports.updateBookingStatus = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// Accept booking
+exports.acceptBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const booking = await db.Booking.findByPk(id, {
+      include: [{ model: db.Gig }],
+    });
+
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+
+    // Ensure only the owner of the gig can accept/reject
+    if (booking.Gig.userId !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    booking.status = "Accepted";
+    await booking.save();
+
+    res.json({ message: "Booking accepted", booking });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Reject booking
+exports.rejectBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const booking = await db.Booking.findByPk(id, {
+      include: [{ model: db.Gig }],
+    });
+
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+
+    if (booking.Gig.userId !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    booking.status = "Rejected";
+    await booking.save();
+
+    res.json({ message: "Booking rejected", booking });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+

@@ -1,27 +1,73 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import API from "../api"; // Your configured Axios instance
 
 const EditProfile = () => {
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "08012345678",
-    address: "123 Artisan Street, Lagos",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await API.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setProfile(response.data);
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    Swal.fire({
-      title: "Success!",
-      text: "Profile Updated Successfully",
-      icon: "success",
-      confirmButtonText: "OK",
-    });
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await API.put("/users/me", profile, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      Swal.fire({
+        title: "Success!",
+        text: "Profile Updated Successfully",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    } catch (error) {
+      console.error("Update failed", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to update profile",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
+
+  if (loading) return <div className="p-8 text-center">Loading profile...</div>;
 
   return (
     <div className="flex justify-center px-4 py-10 bg-gray-100">
@@ -53,6 +99,7 @@ const EditProfile = () => {
               required
               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g. john@example.com"
+              readOnly // optional if you want to disable email edits
             />
           </div>
 

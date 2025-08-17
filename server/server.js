@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./models');
+const paymentRoutes = require("./routes/paymentRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 require('dotenv').config();
@@ -12,10 +14,14 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/user'));
 app.use('/api/gigs', require('./routes/gigs'));
 app.use("/api/bookings", require("./routes/bookings"));
 app.use("/api/artisans", require("./routes/artisanRoutes"));
+app.use("/api", paymentRoutes);
+app.use("/api/users", userRoutes); // 👈 e.g. /users/me
+
+
+
 
 
 

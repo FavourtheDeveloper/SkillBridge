@@ -9,7 +9,7 @@ const Orders = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await API.get("/bookings/my-bookings", {
+      const response = await API.get("/bookings/gig-bookings", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -30,13 +30,43 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  const handleStatusChange = async (
+    id: number,
+    action: "Accepted" | "Rejected"
+  ) => {
+    const token = localStorage.getItem("token");
+
+    const endpoint =
+      action === "Accepted"
+        ? `/bookings/accept/${id}`
+        : `/bookings/reject/${id}`;
+
+    try {
+      await API.put(
+        endpoint,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      fetchOrders(); // Refresh
+    } catch (err) {
+      console.error(`Failed to ${action} booking:`, err);
+    }
+  };
+
   const markAsCompleted = async (id: number) => {
     try {
       const token = localStorage.getItem("token");
 
-      await API.put(`/bookings/complete/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.put(
+        `/bookings/complete/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       // Refresh the orders after update
       fetchOrders();
@@ -69,22 +99,32 @@ const Orders = () => {
               </p>
               <p
                 className={`text-sm font-semibold ${
-                  order.status === "Completed"
+                  order.status === "Accepted"
                     ? "text-green-600"
+                    : order.status === "Rejected"
+                    ? "text-red-600"
                     : "text-yellow-600"
                 }`}
               >
-                {order.status || "Pending"}
+                {order.status}
               </p>
 
               {/* Show button only if status is not completed */}
-              {order.status !== "Completed" && (
-                <button
-                  onClick={() => markAsCompleted(order.id)}
-                  className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Mark as Completed
-                </button>
+              {order.status === "Pending" && (
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    onClick={() => handleStatusChange(order.id, "Accepted")}
+                    className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(order.id, "Rejected")}
+                    className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Reject
+                  </button>
+                </div>
               )}
             </div>
           ))}

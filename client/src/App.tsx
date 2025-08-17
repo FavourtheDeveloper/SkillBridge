@@ -6,6 +6,7 @@ import ServiceDetail from "./pages/ServiceDetail";
 import LoginRegister from "./pages/LoginRegister";
 import Dashboard from "./pages/Dashboard";
 import MyBookings from "./pages/MyBookings";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/auth" element={<LoginRegister />} />
         <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
       </Routes>
   );
 }

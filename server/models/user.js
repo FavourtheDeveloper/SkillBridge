@@ -26,5 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     longitude: {
       type: DataTypes.FLOAT,
     },
+    balance: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+    },    
   });
 };

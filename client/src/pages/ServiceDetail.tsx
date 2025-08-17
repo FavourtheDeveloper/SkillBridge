@@ -35,39 +35,16 @@ const ServiceDetail = () => {
     e.preventDefault();
   
     const token = localStorage.getItem("token");
-  
     if (!token) {
-      Swal.fire({
-        icon: "warning",
-        title: "Login Required",
-        text: "You need to be logged in to book a service.",
-        confirmButtonText: "Login",
-      }).then(() => {
-        navigate("/auth");
-      });
-      return;
+      Swal.fire({ icon: "warning", title: "Login Required" });
+      return navigate("/auth");
     }
   
-    // Decode token to get userId
-    let userIdFromToken;
-    try {
-      const decoded = jwtDecode(token);
-      userIdFromToken = decoded?.id; // or decoded?.userId based on your token payload
-    } catch (err) {
-      console.error("Invalid token");
-      Swal.fire("Error", "Invalid session. Please login again.", "error");
-      navigate("/auth");
-      return;
-    }
+    const decoded = jwtDecode(token);
+    const userId = decoded?.id;
   
-    // ❌ Prevent artisan from booking their own gig
-    if (userIdFromToken === service?.userId) {
-      Swal.fire({
-        icon: "warning",
-        title: "Action Not Allowed",
-        text: "This is your gig, so you can't book it.",
-      });
-      return;
+    if (userId === service?.userId) {
+      return Swal.fire("Warning", "You can't book your own gig.", "warning");
     }
   
     const name = e.target.form[0].value.trim();
@@ -76,45 +53,29 @@ const ServiceDetail = () => {
     const date = e.target.form[3].value.trim();
   
     if (!name || !email || !address || !date) {
-      Swal.fire({
-        icon: "error",
-        title: "Incomplete Form",
-        text: "Please fill out all fields before booking.",
-      });
-      return;
+      return Swal.fire("Incomplete", "Fill all fields", "error");
     }
-  
-    const newBooking = {
-      gigId: service?.id,
-      name,
-      email,
-      address,
-      date,
-      amount: service?.price,
-    };
   
     try {
-      await API.post("/bookings", newBooking, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const payment = await API.post("/payments/initiate", {
+        amount: service?.price,
+        email,
+        gigId: service?.id,
+        name,
+        address,
+        date,
+        userId, // optional
       });
   
-      Swal.fire({
-        title: "Success!",
-        text: "Booked Successfully",
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(() => {
-        navigate("/my-bookings");
-      });
-  
-      window.dispatchEvent(new Event("bookingUpdated"));
+      window.location.href = payment.data.authorization_url;
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Booking failed", "error");
+      Swal.fire("Error", "Failed to initiate payment", "error");
     }
   };
+  
+  
+  
   
   
   

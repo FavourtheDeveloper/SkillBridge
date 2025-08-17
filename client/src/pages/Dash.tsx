@@ -10,6 +10,8 @@ const Dash = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("User");
+  const [balance, setBalance] = useState(0);
+
 
   // 🔒 Redirect to login if token is missing
   useEffect(() => {
@@ -21,6 +23,18 @@ const Dash = () => {
     } else {
       setUserName(user?.name || "User");
     }
+
+    // 🔄 Fetch user profile
+    API.get("/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        setBalance(res.data.balance || 0);
+      })
+      .catch((err) => {
+        console.error("Error fetching user:", err);
+      });
+
   }, [navigate]);
 
   // 📦 Fetch user bookings
@@ -28,7 +42,7 @@ const Dash = () => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await API.get("/bookings/my-bookings", {
+        const res = await API.get("/bookings/gig-bookings", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -77,22 +91,22 @@ const Dash = () => {
           </div>
         </div>
 
-        {/* Referral Card */}
-        <div className="flex items-center bg-orange-500 rounded-2xl text-white p-5">
-          <div>
-            <h2 className="text-2xl pb-2">Invite your friends, reward yourself</h2>
-            <p className="text-sm">
-              Share your referral link and earn bonuses for each <br /> successful signup.
-            </p>
-          </div>
-          <div>
-            <img
-              className="w-32 h-32 mx-5 rounded-full object-cover"
-              src={ServiceImage}
-              alt="profilePic"
-            />
-          </div>
-        </div>
+        {/* Balance Card */}
+<div className="flex items-center bg-green-600 rounded-2xl text-white p-5">
+  <div>
+    <h2 className="text-2xl pb-2">Wallet Balance</h2>
+    <p className="text-4xl font-bold">₦{balance.toLocaleString()}</p>
+    <p className="text-sm mt-1">Keep track of your earnings here</p>
+  </div>
+  <div>
+    <img
+      className="w-32 h-32 mx-5 rounded-full object-cover"
+      src={ServiceImage}
+      alt="Wallet"
+    />
+  </div>
+</div>
+
       </div>
 
       {/* Dashboard Overview */}
@@ -104,12 +118,12 @@ const Dash = () => {
             <p className="text-2xl font-bold">{bookings.length}</p>
           </div>
           <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-sm text-gray-500">Pending Orders</h3>
-            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Pending").length}</p>
+            <h3 className="text-sm text-gray-500">Accepted Orders</h3>
+            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Accepted").length}</p>
           </div>
           <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-sm text-gray-500">Completed Orders</h3>
-            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Completed").length}</p>
+            <h3 className="text-sm text-gray-500">Rejected Orders</h3>
+            <p className="text-2xl font-bold">{bookings.filter(b => b.status === "Rejected").length}</p>
           </div>
         </div>
 
@@ -129,8 +143,8 @@ const Dash = () => {
             onChange={(e) => setFilter(e.target.value)}
           >
             <option value="All">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Accepted">Accepted</option>
           </select>
         </div>
 
